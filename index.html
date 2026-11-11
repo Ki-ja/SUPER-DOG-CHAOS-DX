@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#100d20">
+  <title>SUPER DOG CHAOS DX — 10 WORLDS + STAR UNIVERSE</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo">🐾 SUPER DOG <b>CHAOS DX</b></div>
+    <small>10 WORLDS + SECRET UNIVERSE ・ ANIMAL BOSSES ・ 激ムズ横スクロール</small>
+  </header>
+
+  <main class="shell" id="shell">
+    <canvas id="game" width="960" height="540" aria-label="犬のアクションゲーム"></canvas>
+
+    <div class="hud" id="hud" hidden>
+      <div class="hudleft">
+        <div class="worldlabel" id="hud-world">WORLD 01 / 10</div>
+        <div class="worldname" id="hud-name">豪華ジャズ酒場</div>
+      </div>
+      <div class="hudright">
+        <div class="hudbox">💛 <span id="hud-lives">03</span> <span class="hide-small">LIVES</span></div>
+        <div class="hudbox">💀 <span id="hud-deaths">00</span></div>
+        <div class="hudbox" id="hud-fire" hidden>🔥 FIRE</div>
+        <button class="iconbtn savebtn" id="save-button" title="セーブ">💾</button>
+        <button class="iconbtn" id="mute" title="音楽ON/OFF (M)">♫</button>
+        <button class="iconbtn" id="pause" title="一時停止 (P)">Ⅱ</button>
+      </div>
+    </div>
+
+    <div class="progress" id="progress" hidden>
+      <div class="progressfill" id="progressfill"></div>
+      <div class="checkpointtick" title="中間地点"></div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <div class="touch" id="touch">
+      <div class="touchgroup">
+        <button id="left" aria-label="左へ移動">◀</button>
+        <button id="right" aria-label="右へ移動">▶</button>
+      </div>
+      <div class="touchgroup">
+        <button id="fire" class="fire" aria-label="ほのお">🔥<small>FIRE</small></button>
+        <button id="jump" class="jump" aria-label="ジャンプ">JUMP</button>
+      </div>
+    </div>
+
+    <section class="overlay" id="start-screen">
+      <div class="eyebrow">🐶 かわいい顔して、罠は鬼畜。</div>
+      <div class="title-glow">SUPER DOG<span>CHAOS DX</span></div>
+      <p class="lead">黄金のレトリバーが挑む、10の異世界。<br>すべてを制覇すると、星が輝く<strong>隠し宇宙コース</strong>が出現！<br>足場も罠もボスも、最後まで気が抜けない！</p>
+      <div class="pills">
+        <div class="pill">🌍 10 WORLD + 🌌 SECRET</div>
+        <div class="pill">🎵 11曲のオリジナルBGM</div>
+        <div class="pill">🐕 金・銀・銅の犬像</div>
+        <div class="pill">🚩 中間セーブ</div>
+      </div>
+      <div class="actions">
+        <button class="primary" id="start-button">▶ 冒険スタート</button>
+        <button class="secondary" id="continue-button" hidden>💾 セーブデータから再開</button>
+        <button class="secondary" id="select-button">🗺 全コースから選ぶ</button>
+        <button class="secondary danger" id="reset-button">🗑 データリセット</button>
+      </div>
+      <div class="save-status" id="save-status">セーブデータなし</div>
+      <div class="instructions">
+        <kbd>A</kbd><kbd>D</kbd> / <kbd>←</kbd><kbd>→</kbd> 移動　<kbd>Space</kbd> ジャンプ　<kbd>F</kbd> 炎　<kbd>R</kbd> リトライ　<kbd>P</kbd> 一時停止<br>
+        ボスは踏むか炎で倒そう。巨大なドッグフード缶を取れたらクリア！
+      </div>
+    </section>
+
+    <section class="overlay stage-screen" id="stage-screen" hidden>
+      <h2>🗺️ WORLD SELECT</h2>
+      <p>クリアしたコースは ⭐ がつくよ。10コースすべてクリアすると、隠し宇宙コースが出現！</p>
+      <div class="stage-grid" id="stage-grid"></div>
+      <button class="secondary" id="select-back">← タイトルにもどる</button>
+    </section>
+
+    <section class="overlay" id="death-screen" hidden>
+      <div class="big-emoji">💀 🐾 💥</div>
+      <h2 class="result-title" style="color:#ff8b8b">やられた！</h2>
+      <p class="result-desc" id="death-msg">罠にひっかかった！</p>
+      <div class="tag" id="retry-label">🚩 中間地点から復活</div>
+      <div class="actions">
+        <button class="primary" id="retry-button">↻ もう一回！ (R)</button>
+        <button class="secondary" id="death-select">コース選択</button>
+      </div>
+    </section>
+
+    <section class="overlay" id="clear-screen" hidden>
+      <div class="big-emoji">🏆 🐕 🥫</div>
+      <h2 class="result-title" id="clear-title">STAGE CLEAR!</h2>
+      <p class="result-desc" id="clear-msg">大きなドッグフードをゲット！</p>
+      <div class="actions">
+        <button class="primary" id="next-button">▶ 次のワールドへ</button>
+        <button class="secondary" id="clear-select">ほかのコース</button>
+      </div>
+    </section>
+
+    <section class="overlay" id="pause-screen" hidden>
+      <div class="big-emoji">⏸️ 🐶</div>
+      <h2 class="result-title">PAUSE</h2>
+      <p class="result-desc">のんびりしてると、次の罠が待ってるよ。</p>
+      <div class="actions">
+        <button class="primary" id="resume-button">▶ 再開する (P)</button>
+        <button class="secondary" id="save-title-button">💾 セーブしてタイトルへ</button>
+        <button class="secondary" id="pause-select">コース選択</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <strong>金の犬像</strong>＝1UP　 /　 <strong>銅の犬像</strong>＝毒　 /　 <strong>銀の犬像</strong>＝5秒間の犬だらけダンスパーティー！　 /　🚩＝中間地点（残機0でリセット）
+  </footer>
+
+  <noscript>このゲームを遊ぶには JavaScript を有効にしてください。</noscript>
+  <script src="game.js" onerror="document.getElementById('start-screen').insertAdjacentHTML('beforeend','<p style=&quot;color:#ffd0d0;background:#641f36;padding:10px 14px;border-radius:10px&quot;>game.jsを読み込めません。同じフォルダに index.html・style.css・game.js を置いてください。</p>')"></script>
+</body>
+</html>
